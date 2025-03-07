@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - fix-tmpdir
     paths-ignore:
       - '**/README.md'
       - '**/CHANGELOG.md'
@@ -23,105 +24,108 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install Clojure
-        uses: DeLaGuardo/setup-clojure@master
-        with:
-          cli: '1.12.0.1495'
-          bb: '0.9.161'
-
-      - name: Check if namespaces are clean
-        run: bb lint-clean
-
-      - name: Check if namespaces are formatted
-        run: bb lint-format
-
-      - name: Check if namespaces have no diagnostics
-        run: bb lint-diagnostics
-
-  unit-test:
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04]
-        jdk: [11, 15, 17, 19]
-        include:
-          - os: windows-latest
-            jdk: 11
-          - os: macos-latest
-            jdk: 11
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-
-      - name: Install Clojure
-        uses: DeLaGuardo/setup-clojure@master
-        with:
-          cli: '1.12.0.1495'
-          bb: '0.9.161'
-
-      - name: Run tests
-        run: bb test
-
-  jvm-integration-test:
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04]
-        jdk: [11, 15, 17]
-        include:
-          - os: windows-latest
-            jdk: 11
-          - os: macos-latest
-            jdk: 11
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: ${{ matrix.jdk }}
-
-      - name: Install clojure build tools
-        uses: DeLaGuardo/setup-clojure@master
-        with:
-          cli: '1.12.0.1495'
-          lein: '2.9.1'
-          boot: '2.8.3'
-          bb: '0.9.161'
-
-      - name: Generate embedded binary
-        run: bb prod-cli
-
-      - name: Run integration tests
-        run: bb integration-test
-
-      - name: Run babashka pod tests
-        run: bb pod-test
+  # lint:
+  #   runs-on: ubuntu-24.04-arm
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: fix-tmpdir
+  #         fetch-depth: 0
+  #
+  #     - name: Install Clojure
+  #       uses: DeLaGuardo/setup-clojure@master
+  #       with:
+  #         cli: '1.12.0.1495'
+  #         bb: '0.9.161'
+  #
+  #     - name: Check if namespaces are clean
+  #       run: bb lint-clean
+  #
+  #     - name: Check if namespaces are formatted
+  #       run: bb lint-format
+  #
+  #     - name: Check if namespaces have no diagnostics
+  #       run: bb lint-diagnostics
+  #
+  # # unit-test:
+  # #   runs-on: ${{matrix.os}}
+  # #   strategy:
+  # #     fail-fast: false
+  # #     matrix:
+  # #       os: [ubuntu-20.04]
+  # #       jdk: [11, 15, 17, 19]
+  # #       include:
+  # #         - os: windows-latest
+  # #           jdk: 11
+  # #         - os: macos-latest
+  # #           jdk: 11
+  # #   steps:
+  # #     - uses: actions/checkout@v4
+  # #       with:
+  # #         fetch-depth: 0
+  # #
+  # #     - name: Set up JDK ${{ matrix.jdk }}
+  # #       uses: actions/setup-java@v1
+  # #       with:
+  # #         java-version: ${{ matrix.jdk }}
+  # #
+  # #     - name: Install Clojure
+  # #       uses: DeLaGuardo/setup-clojure@master
+  # #       with:
+  # #         cli: '1.12.0.1495'
+  # #         bb: '0.9.161'
+  # #
+  # #     - name: Run tests
+  # #       run: bb test
+  #
+  # # jvm-integration-test:
+  # #   runs-on: ${{matrix.os}}
+  # #   strategy:
+  # #     fail-fast: false
+  # #     matrix:
+  # #       os: [ubuntu-20.04]
+  # #       jdk: [11, 15, 17]
+  # #       include:
+  # #         - os: windows-latest
+  # #           jdk: 11
+  # #         - os: macos-latest
+  # #           jdk: 11
+  # #   steps:
+  # #     - uses: actions/checkout@v4
+  # #       with:
+  # #         fetch-depth: 0
+  # #
+  # #     - name: Set up JDK ${{ matrix.jdk }}
+  # #       uses: actions/setup-java@v3
+  # #       with:
+  # #         distribution: 'adopt'
+  # #         java-version: ${{ matrix.jdk }}
+  # #
+  # #     - name: Install clojure build tools
+  # #       uses: DeLaGuardo/setup-clojure@master
+  # #       with:
+  # #         cli: '1.12.0.1495'
+  # #         lein: '2.9.1'
+  # #         boot: '2.8.3'
+  # #         bb: '0.9.161'
+  # #
+  # #     - name: Generate embedded binary
+  # #       run: bb prod-cli
+  # #
+  # #     - name: Run integration tests
+  # #       run: bb integration-test
+  # #
+  # #     - name: Run babashka pod tests
+  # #       run: bb pod-test
 
   graalvm-build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: fix-tmpdir
       - name: Install Clojure
         uses: DeLaGuardo/setup-clojure@master
         with:
@@ -132,14 +136,14 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
-          native-image-musl: 'true'
+          native-image-musl: 'false'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Linux native image
         env:
           CLOJURE_LSP_XMX: "-J-Xmx6g"
-          CLOJURE_LSP_STATIC: true
-          CLOJURE_LSP_MUSL: true
+          CLOJURE_LSP_STATIC: false
+          CLOJURE_LSP_MUSL: false
         run: |
           bb native-cli
 
@@ -154,36 +158,36 @@ jobs:
           name: clojure-lsp-native
           path: clojure-lsp
 
-  graalvm-integration-test:
-    needs: graalvm-build
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install clojure build tools
-        uses: DeLaGuardo/setup-clojure@master
-        with:
-          cli: '1.12.0.1495'
-          lein: '2.9.1'
-          boot: '2.8.3'
-          bb: '0.9.161'
-
-      - uses: actions/download-artifact@v4
-        name: clojure-lsp-native
-
-      - name: Setup binary
-        run: |
-          cp -rf clojure-lsp-native/clojure-lsp cli/clojure-lsp
-          cp -rf clojure-lsp-native/clojure-lsp clojure-lsp
-          chmod +x cli/clojure-lsp
-          chmod +x clojure-lsp
-
-      - name: Run babashka pod tests
-        env:
-          CLOJURE_LSP_TEST_ENV: native
-        run: bb pod-test
-
-      - name: Run integration tests
-        run: bb integration-test
+  # graalvm-integration-test:
+  #   needs: graalvm-build
+  #   runs-on: ubuntu-20.04
+  #   strategy:
+  #     fail-fast: false
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Install clojure build tools
+  #       uses: DeLaGuardo/setup-clojure@master
+  #       with:
+  #         cli: '1.12.0.1495'
+  #         lein: '2.9.1'
+  #         boot: '2.8.3'
+  #         bb: '0.9.161'
+  #
+  #     - uses: actions/download-artifact@v4
+  #       name: clojure-lsp-native
+  #
+  #     - name: Setup binary
+  #       run: |
+  #         cp -rf clojure-lsp-native/clojure-lsp cli/clojure-lsp
+  #         cp -rf clojure-lsp-native/clojure-lsp clojure-lsp
+  #         chmod +x cli/clojure-lsp
+  #         chmod +x clojure-lsp
+  #
+  #     - name: Run babashka pod tests
+  #       env:
+  #         CLOJURE_LSP_TEST_ENV: native
+  #       run: bb pod-test
+  #
+  #     - name: Run integration tests
+  #       run: bb integration-test

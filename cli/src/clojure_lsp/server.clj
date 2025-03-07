@@ -73,7 +73,7 @@
 (defrecord TimbreLogger []
   logger/ILogger
   (setup [this]
-    (let [log-path (str (java.io.File/createTempFile "clojure-lsp." ".out"))]
+    (let [log-path (str (System/getenv "TMPDIR") "/" "clojure-lsp." (gensym) ".out"))]
       (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
                              :appenders {:println {:enabled? false}
                                          :spit (timbre/spit-appender {:fname log-path})}})
