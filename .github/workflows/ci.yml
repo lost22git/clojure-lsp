@@ -29,7 +29,6 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v4
   #       with:
-  #         ref: fix-tmpdir
   #         fetch-depth: 0
   #
   #     - name: Install Clojure
@@ -124,8 +123,6 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: fix-tmpdir
       - name: Install Clojure
         uses: DeLaGuardo/setup-clojure@master
         with:

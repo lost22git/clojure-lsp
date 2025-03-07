@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix-tmpdir
           fetch-depth: 0
       - name: Prepare java
         uses: actions/setup-java@v1
@@ -56,7 +55,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix-tmpdir
           fetch-depth: 0
       - name: Prepare java
         uses: actions/setup-java@v1
@@ -252,8 +250,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: fix-tmpdir
+
       - uses: actions/download-artifact@v4
         with:
           name: clojure-lsp-standalone.jar
@@ -512,7 +509,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix-tmpdir
           fetch-depth: 0
       - name: Get latest tag
         id: latest-tag
@@ -543,7 +539,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix-tmpdir
           fetch-depth: 0
       - name: Get latest tag
         id: latest-tag
